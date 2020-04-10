@@ -6,6 +6,14 @@
     <title>Games</title>
     <script src="https://unpkg.com/page/page.js"></script>
     <link rel="stylesheet" href="styles/style.css">
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+
 </head>
 <body>
     <header>
@@ -13,9 +21,8 @@
             <div>
                 <input type="search" id="gameSearch" placeholder="Busca un juego">
             </div>
-            <div>
-                <input type="button" value="Regístrate">
-                <input type="button" value="Inicia sesion">
+            <div id="toUser">
+                
             </div>
         </nav>
         <h1>Games</h1>
@@ -24,7 +31,7 @@
     <section id="info">
         
     </section>
-    
+    <script src="js/config.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
