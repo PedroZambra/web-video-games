@@ -4,6 +4,10 @@
     font-family: 'Roboto', sans-serif;
 }
 
+a {
+    text-decoration: none;
+}
+
 header {
     width: 100%;
     height: 100px;
@@ -13,8 +17,12 @@ header {
     color: #FFF;
 }
 
-header h1 {
+#title {
     cursor: pointer;
+}
+
+#title a {
+    color: #FFF;
 }
 
 nav {

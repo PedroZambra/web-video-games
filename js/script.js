@@ -14,8 +14,10 @@ var fire = firebase.initializeApp(firebaseConfig);
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
         page.redirect('/user/'+ user.uid);
+        document.getElementById('title').innerHTML = `<a href="/user/${user.uid}">GAMES</a>`;
     } else {
         page.redirect('/');
+        document.getElementById('title').innerHTML = `<a href="/">GAMES</a>`;
     }
 });
 
@@ -28,39 +30,12 @@ page('/registered', registered);
 page('/user/:id', user);
 page();
 
-document.getElementById('title').addEventListener('click', () => {
-    page.redirect('/');
-})
-
-document.getElementById('toUser').addEventListener('click', e => {
-    const target = event.target.getAttribute("data-action");
-    if(target === 'register'){
-        page.redirect('/register');
-    } 
-
-    if(target === 'login') {
-        page.redirect('/login');
-    }
-
-    if(target === "logOut") {
-        firebase
-            .auth()
-            .signOut()
-            .then(() => {
-                console.log("Deslogueado!");
-                page.redirect('/');
-            })
-            .catch(err => console.log(err))
-        isLogin = false;    
-    }
-})
-
 //PANTALLA DE INICIO
 function index() {
-    document.getElementById('toUser').innerHTML = ` <input type="button" value="Regístrate" data-action="register">
-                                                <input type="button" value="Inicia sesion" data-action= "login">`;
+    document.getElementById('toUser').innerHTML = ` <a href="/register"> <input type="button" value="Regístrate" data-action="register"> </a>
+                                                    <a href="/login"> <input type="button" value="Inicia sesion" data-action= "login"> </a>`;
 
-    document.getElementById('info').innerHTML=` <div>
+    document.getElementById('info').innerHTML = `<div>
                                                     <h1>¡Bienvenido!</h1> 
                                                     <p>Busca juegos o registrate si no estas logeado para guardar tus favoritos y más.</p>
                                                 </div>`;
@@ -69,7 +44,7 @@ function index() {
 
 //PANTALLA DE REGISTRO
 function register() {
-    document.getElementById("info").innerHTML= `<div class="panel">
+    document.getElementById('info').innerHTML = `<div class="panel">
                                                     <h3>Register</h3>
                                                     <input type="text" id="user" placeholder="Usuario">
                                                     <input type="password" id="pass" placeholder="Contraseña">
@@ -79,8 +54,7 @@ function register() {
 
 //PANTALLAD DE INICIO DE SESION
 function login() {
-    isLogin = true;
-    document.getElementById("info").innerHTML= `<div class="panel">
+    document.getElementById('info').innerHTML = `<div class="panel">
                                                     <h3>Login</h3>
                                                     <input type="text" id="userLogin" placeholder="Usuario">
                                                     <input type="password" id="passLogin" placeholder="Contraseña">
@@ -96,8 +70,22 @@ function registered() {
 //PANTALLA DE USUARIO
 function user(id) {
     document.getElementById('toUser').innerHTML = `<input type="button" value="Salir" data-action="logOut">`;
-    document.querySelector('section').innerText= "Esta es la sesión del usuario "+ id.params.id;
+    document.querySelector('section').innerText = "Esta es la sesión del usuario "+ id.params.id;
 }
+
+document.getElementById('toUser').addEventListener('click', e => {
+    const target = event.target.getAttribute("data-action");
+    if(target === "logOut") {
+        firebase
+            .auth()
+            .signOut()
+            .then(() => {
+                console.log("Deslogueado!");
+                page.redirect('/');
+            })
+            .catch(err => console.log(err)) 
+    }
+})
 
 //PANTALLA DE JUEGOS
 function games(game){
@@ -141,7 +129,6 @@ document.getElementById('info').addEventListener('click', e => {
         .signInWithEmailAndPassword(user, pass)
         .then(() => {
             console.log("Sesión de usuario")
-            // page.redirect('/user/'+firebase.auth().currentUser.uid);
         })
         .catch(error => alert(error.message));
     }
