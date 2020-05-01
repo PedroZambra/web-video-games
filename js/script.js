@@ -23,11 +23,13 @@ firebase.auth().onAuthStateChanged(user => {
 
 //ROUTER
 page('/', index);
-page('/games/:id', games);
+page('/search/:id', games);
 page('/register', register);
 page('/login', login);
 page('/registered', registered);
 page('/user/:id', user);
+page('/user/:id/search/:id', games);
+page('/user/:id/my-games', userGames);
 page();
 
 //PANTALLA DE INICIO
@@ -67,10 +69,13 @@ function registered() {
     document.querySelector('section').innerText= "Registrado con éxito. Inicia sesión para entrar en tu cuenta.";
 }
 
-//PANTALLA DE USUARIO
+//PANTALLA DE USUARIO - SESION
 function user(id) {
     document.getElementById('toUser').innerHTML = `<input type="button" value="Salir" data-action="logOut">`;
-    document.querySelector('section').innerText = "Esta es la sesión del usuario "+ id.params.id;
+    document.querySelector('section').innerHTML = `<div>
+                                                        <h3>Esta es la sesión del usuario ${id.params.id}</h3>
+                                                        <a href="/user/${id.params.id}/my-games"> <input type="button" value="Mis juegos"> </a>
+                                                    </div>`;
 }
 
 document.getElementById('toUser').addEventListener('click', e => {
@@ -81,27 +86,11 @@ document.getElementById('toUser').addEventListener('click', e => {
             .signOut()
             .then(() => {
                 console.log("Deslogueado!");
-                page.redirect('/');
+                //El observador actua y regresa a '/'
             })
             .catch(err => console.log(err)) 
     }
 })
-
-//PANTALLA DE JUEGOS
-function games(game){
-    document.getElementById('info').innerHTML = '';
-
-    //Búsqueda de videojuegos
-    fetch('https://api.rawg.io/api/games?search='+game.params.id)
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);
-            data.results.forEach(game => {
-                document.getElementById('info').innerHTML += printGames(game);
-            });
-            
-        })
-}
 
 //AUTH
 document.getElementById('info').addEventListener('click', e => {
@@ -139,22 +128,42 @@ document.getElementById('info').addEventListener('click', e => {
 document.getElementById('gameSearch').addEventListener('keypress', e => {
     if (e.key === 'Enter') {
         var game = document.getElementById('gameSearch').value;
-        page.redirect('/games/'+game);
+        if(firebase.auth().currentUser){
+            page.redirect('/user/'+firebase.auth().currentUser.uid+'/search/'+game);
+        } else {
+            page.redirect('/search/'+game);
+        }
     }
 });
 
-function printGames(game) {
+//PANTALLA DE JUEGOS SIN SESION
+function games(game){
+    document.getElementById('info').innerHTML = '';
+    //Búsqueda de videojuegos
+    fetch('https://api.rawg.io/api/games?search='+game.params.id)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            data.results.forEach(game => {
+                document.getElementById('info').innerHTML += printGame(game);
+            });
+        })
+}
+
+const printGame = game => {
     return  `<div class="games">
                 <img src="${game.background_image}">
                 <h3>${game.name}</h3>
-                <ul>
+                <ul class="genres">
                     ${genres(game)}
                 </ul>
                 <p>Lanzamiento: ${game.released}</p>
+                ${saveGames(game)}
             </div>`
 }
 
-function genres(game) {
+
+const genres = game => {
     if(game.genres.length > 0) {
         let ganres = '';
         for (let i = 0; i < game.genres.length; i++) {
@@ -166,7 +175,59 @@ function genres(game) {
     }
 }
 
+const saveGames = game => {
+    if(firebase.auth().currentUser){
+        return `<ul class="options" data-key=${game.id}>
+                    <li data-action="favorite">Favoritos</li>
+                    <li data-action="wanted">Quiero jugarlo</li>
+                    <li data-action="playing">Jugando</li>
+                    <li data-action="completed">Completado</li>
+                <ul>`;
+    } else {
+        return '';
+    }
+}
+document.getElementById('info').addEventListener('click', e => {
+    const target = e.target.getAttribute("data-action");
+    const key = e.target.parentElement.getAttribute("data-key");
+
+    if(target === 'favorite' || target === 'wanted' || target === 'playing' || target === 'completed') {
+        fetch('https://api.rawg.io/api/games/'+key)
+        .then(res => res.json())
+        .then(data => {
+            addFavoriteGame(target, data);
+        });
+    }
+});
+
+//PANTALLA DE JUEGOS CON SESION
 
 
+//JUEGOS DE CADA USUARIO
+function userGames() {
+    document.querySelector('section').innerHTML = `Estos serian mis juegos guardados`;
+}
 
 
+//ADD GAMES USER
+function addFavoriteGame(target, game) {
+    firebase.database().ref(firebase.auth().currentUser.uid).child(target).push({
+        id: game.id,
+        name: game.name,
+        background_image: game.background_image,
+        genres: game.genres,
+        released: game.released,
+        website: game.website
+    })
+    
+    console.log(target);
+    console.log(game);
+    console.log("AÑADIDA");
+    //Continuar
+}
+
+//DELETE FILM
+function deleteFilm(id) {
+    firebase.database().ref(firebase.auth().currentUser.uid).child(id).remove();
+    sectionFilms.innerText = 'Eliminada!';
+}
