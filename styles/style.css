@@ -17,10 +17,6 @@ header {
     color: #FFF;
 }
 
-#title {
-    cursor: pointer;
-}
-
 #title a {
     color: #FFF;
 }
@@ -38,7 +34,12 @@ nav input {
     padding: 10px;
 }
 
-section {
+#info {
+    margin-top: 25px;
+    text-align: center;
+}
+
+#render {
     max-width: 1280px;
     margin: 25px auto;
 
@@ -117,6 +118,7 @@ section {
     float: left;
     padding: 10px 0;
     width: 100px;
+    cursor: pointer;
 }
 
 .options li:nth-child(1) {
@@ -135,4 +137,18 @@ section {
 .options li:nth-child(4) {
     background-color: #3dA949;
     border-bottom-right-radius: 10px;
+}
+
+.options li:hover {
+    background-color: #303030;
+    transition: background-color 0.5s;
+}
+
+.delete {
+    width: 100%;
+    padding: 5px;
+    font-variant: small-caps;
+    background-color: #DE7E6F;
+    border: none;
+    cursor: pointer;
 }
