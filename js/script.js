@@ -14,10 +14,10 @@ var fire = firebase.initializeApp(firebaseConfig);
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
         page.redirect('/user/'+ user.uid);
-        document.getElementById('title').innerHTML = `<a href="/user/${user.uid}">GAMES</a>`;
+        document.getElementById('title').innerHTML = `<a href="/user/${user.uid}"> <h1> GAMERS </h1> </a>`;
     } else {
         page.redirect('/');
-        document.getElementById('title').innerHTML = `<a href="/">GAMES</a>`;
+        document.getElementById('title').innerHTML = `<a href="/"> <h1> GAMERS </h1> </a>`;
     }
 });
 
@@ -37,8 +37,12 @@ page();
 
 //PANTALLA DE INICIO
 function index() {
-    document.getElementById('toUser').innerHTML = ` <a href="/register"> <input type="button" value="Regístrate" data-action="register"> </a>
-                                                    <a href="/login"> <input type="button" value="Inicia sesion" data-action= "login"> </a>`;
+    document.getElementById('toUser').innerHTML = ` <li> 
+                                                        <a href="/register"> Regístrate </a> 
+                                                    </li>
+                                                    <li> 
+                                                        <a href="/login"> Iniciar sesión </a> 
+                                                    </li>`;
 
     document.getElementById('render').innerHTML = `<div>
                                                     <h1>¡Bienvenido!</h1> 
@@ -74,16 +78,14 @@ function registered() {
 
 //PANTALLA DE USUARIO - INICIADA SESION
 function userSession(id) {
-    document.getElementById('toUser').innerHTML = `<input type="button" value="Salir" data-action="logOut">`;
+    document.getElementById('toUser').innerHTML = `<li> <a href="" data-action="logOut"> Salir </a> </li>`;
     document.getElementById('info').innerHTML = '';
-    document.getElementById('render').innerHTML = `<div>
-                                                        <h3>¡Bienvenido ${firebase.auth().currentUser.email}!</h3>
-                                                        <ul>
-                                                            <li> <a href="/user/${id.params.id}/favorites"> Favoritos </a> </li>
-                                                            <li> <a href="/user/${id.params.id}/wanted"> Quiero jugarlos </a> </li>
-                                                            <li> <a href="/user/${id.params.id}/playing"> Jugando </a> </li>
-                                                            <li> <a href="/user/${id.params.id}/completed"> Completados </a> </li>
-                                                        </ul>
+    document.getElementById('render').innerHTML = `<div id="subMenu">
+                                                        <div> <h3> ¡Bienvenido ${firebase.auth().currentUser.email}! </h3> </div>
+                                                        <div class="subMenuButtons"> <a href="/user/${id.params.id}/favorites"> Favoritos </a> </div>
+                                                        <div class="subMenuButtons"> <a href="/user/${id.params.id}/wanted"> Quiero jugarlos </a> </div>
+                                                        <div class="subMenuButtons"> <a href="/user/${id.params.id}/playing"> Jugando </a> </div>
+                                                        <div class="subMenuButtons"> <a href="/user/${id.params.id}/completed"> Completados </a> </div>
                                                     </div>`;
 }
 
@@ -287,7 +289,7 @@ function seeUserGames(folder) {
                                                                     ${genres(game)}
                                                                 </ul>
                                                                 <p>Lanzamiento: ${game.released}</p>
-                                                                ${(game.website) ? `<p>WEB: <a href="${game.website}" target="_blank"> ${game.website} </a> </p>` : ``}
+                                                                ${(game.website) ? `<p class="web">WEB: <a href="${game.website}" target="_blank"> ${game.website} </a> </p>` : `<p>No hay web disponible</p>`}
                                                                 <input type="button" value="Eliminar" class="delete" data-action="delete" data-folder="${snapshot.key}">
                                                             </div>`
         });
