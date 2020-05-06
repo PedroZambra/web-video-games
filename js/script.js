@@ -42,33 +42,33 @@ function index() {
                                                     </li>
                                                     <li> 
                                                         <a href="/login"> Iniciar sesión </a> 
-                                                    </li>`;
+                                                    </li>`;                                              
 
-    document.getElementById('render').innerHTML = `<div>
-                                                    <h1>¡Bienvenido!</h1> 
-                                                    <p>Busca juegos o registrate si no estas logeado para guardar tus favoritos y más.</p>
-                                                </div>`;
+    document.getElementById('render').innerHTML = ` <div>
+                                                        <h1>¡Bienvenido!</h1> 
+                                                        <p>Busca juegos o registrate si no estas logeado para guardar tus favoritos y más.</p>
+                                                    </div>`;
 }
 
 
 //PANTALLA DE REGISTRO
 function register() {
-    document.getElementById('render').innerHTML = `<div class="panel">
-                                                    <h3>Register</h3>
-                                                    <input type="text" id="email" placeholder="Correo">
-                                                    <input type="password" id="pass" placeholder="Contraseña">
-                                                    <input type="submit" id="register" value="Enviar" data-action="submitRegistrer">
-                                                </div>`;
+    document.getElementById('render').innerHTML =  ` <div class="panel">
+                                                        <h3>Register</h3>
+                                                        <input type="text" id="email" placeholder="Correo">
+                                                        <input type="password" id="pass" placeholder="Contraseña">
+                                                        <input type="submit" id="register" value="Enviar" data-action="submitRegistrer">
+                                                    </div>`;
 }
 
 //PANTALLAD DE INICIO DE SESION
 function login() {
-    document.getElementById('render').innerHTML = `<div class="panel">
-                                                    <h3>Login</h3>
-                                                    <input type="text" id="emailLogin" placeholder="Correo">
-                                                    <input type="password" id="passLogin" placeholder="Contraseña">
-                                                    <input type="submit" id="login" value="Enviar" data-action="submitLogin">
-                                                </div>`;
+    document.getElementById('render').innerHTML = ` <div class="panel">
+                                                        <h3>Login</h3>
+                                                        <input type="text" id="emailLogin" placeholder="Correo">
+                                                        <input type="password" id="passLogin" placeholder="Contraseña">
+                                                        <input type="submit" id="login" value="Enviar" data-action="submitLogin">
+                                                    </div>`;
 }
 
 //PANTALLA REGISTRO ÉXITO
@@ -80,7 +80,7 @@ function registered() {
 function userSession(id) {
     document.getElementById('toUser').innerHTML = `<li> <a href="" data-action="logOut"> Salir </a> </li>`;
     document.getElementById('info').innerHTML = '';
-    document.getElementById('render').innerHTML = `<div id="subMenu">
+    document.getElementById('render').innerHTML = ` <div id="subMenu">
                                                         <div> <h3> ¡Bienvenido ${firebase.auth().currentUser.email}! </h3> </div>
                                                         <div class="subMenuButtons"> <a href="/user/${id.params.id}/favorites"> Favoritos </a> </div>
                                                         <div class="subMenuButtons"> <a href="/user/${id.params.id}/wanted"> Quiero jugarlos </a> </div>
@@ -91,17 +91,17 @@ function userSession(id) {
 
 //DESLOGUEAR
 document.getElementById('toUser').addEventListener('click', e => {
-    const target = event.target.getAttribute("data-action");
+    const target = e.target.getAttribute("data-action");
     if(target === "logOut") {
         firebase
             .auth()
             .signOut()
             .then(() => {
-                console.log("Deslogueado!");
                 document.getElementById('info').innerHTML= '';
+                document.getElementById('render').innerHTML= '';
                 //El observador actua y regresa a '/'
             })
-            .catch(err => console.log(err)) 
+            .catch(err => alert("ERROR", err)); 
     }
 })
 
@@ -127,7 +127,6 @@ document.getElementById('render').addEventListener('click', e => {
             .auth()
             .createUserWithEmailAndPassword(email, pass)
             .then(() => {
-                // console.log("Usuario registrado")
                 page.redirect('/registered');
             })
             .catch(error => alert(error.message));
@@ -141,7 +140,8 @@ document.getElementById('render').addEventListener('click', e => {
             .auth()
             .signInWithEmailAndPassword(email, pass)
             .then(() => {
-                console.log("Sesión de usuario")
+                // console.log("Sesión de usuario")
+                // Observador actua y redirige a pantalla de usuario
             })
             .catch(error => alert(error.message));
     }
@@ -149,8 +149,8 @@ document.getElementById('render').addEventListener('click', e => {
 
 
 //BUSQUEDA DE JUEGOS
-document.getElementById('gameSearch').addEventListener('keypress', e => {
-    if (e.key === 'Enter') {
+document.getElementById('gameSearch').addEventListener('keydown', e => {
+    if (e.keyCode === 13) {
         var game = document.getElementById('gameSearch').value;
         if(firebase.auth().currentUser){
             page.redirect('/user/'+firebase.auth().currentUser.uid+'/search/'+game);
@@ -167,7 +167,7 @@ function games(game){
     fetch('https://api.rawg.io/api/games?search='+game.params.id)
         .then(res => res.json())
         .then(data => {
-            console.log(data);
+            // console.log(data);
             data.results.forEach(game => {
                 document.getElementById('render').innerHTML += printGame(game);
             });

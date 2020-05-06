@@ -60,7 +60,7 @@ header {
     background-color: #2A4DA4;
 }
 
-nav input {
+#gameSearch {
     padding: 10px;
 }
 
@@ -75,7 +75,8 @@ nav input {
 /* SECCTION */
 
 #container {
-    padding-top:80px;
+    margin: 0 10px;
+    padding-top: 80px;
 }
 
 #info {
@@ -152,15 +153,15 @@ nav input {
 
 #subMenu {
     display: grid;
-	position: relative;
-	margin: 25px 0;
-	max-width: 1280px;
-	grid-template-rows: 50px 100px 100px;
-	grid-template-columns: 50% 50%;
+    position: relative;
+    margin: 25px 0;
+    max-width: 1280px;
+    grid-template-rows: 50px 100px 100px;
+    grid-template-columns: 50% 50%;
     grid-template-areas:    "welcome welcome"
                             "favorites wanted"
-						    "playing completed";
-	grid-gap: 25px;
+                            "playing completed";
+    grid-gap: 25px;
 }
 
 #subMenu div:nth-child(1) {
@@ -264,6 +265,10 @@ nav input {
 }
 
 @media (max-width: 720px) {
+    #gameSearch {
+        width: 80%;
+    }
+
     #subMenu {
         display: grid;
         position: relative;
