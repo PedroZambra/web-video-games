@@ -1,15 +1,7 @@
-//Firebase configuration
-var firebaseConfig = {
-    apiKey: config.API_KEY_FIREBASE,
-    authDomain: "rawg-games.firebaseapp.com",
-    databaseURL: "https://rawg-games.firebaseio.com",
-    projectId: "rawg-games",
-    storageBucket: "rawg-games.appspot.com",
-    messagingSenderId: "301530881168",
-    appId: "1:301530881168:web:f26534fc9212a3ebd44c15"
-};
+import {firebaseConfig} from './firebase.js';
+
 //Initialize Firebase
-var fire = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -35,70 +27,74 @@ page('/user/:id/playing', playing);
 page('/user/:id/completed', completed);
 page();
 
+var info = document.getElementById('info');
+var render = document.getElementById('render');
+var userPanel = document.getElementById('toUser');
+
 //PANTALLA DE INICIO
 function index() {
-    document.getElementById('toUser').innerHTML = ` <li> 
-                                                        <a href="/register"> Regístrate </a> 
-                                                    </li>
-                                                    <li> 
-                                                        <a href="/login"> Iniciar sesión </a> 
-                                                    </li>`;                                              
+    userPanel.innerHTML = ` <li> 
+                                <a href="/register"> Regístrate </a> 
+                            </li>
+                            <li> 
+                                <a href="/login"> Iniciar sesión </a> 
+                            </li>`;                                              
 
-    document.getElementById('render').innerHTML = ` <div>
-                                                        <h1>¡Bienvenido!</h1> 
-                                                        <p>Busca juegos o registrate si no estas logeado para guardar tus favoritos y más.</p>
-                                                    </div>`;
+    render.innerHTML = `<div>
+                            <h1>¡Bienvenido!</h1> 
+                            <p>Busca juegos o registrate si no estas logeado para guardar tus favoritos y más.</p>
+                        </div>`;
 }
 
 
 //PANTALLA DE REGISTRO
 function register() {
-    document.getElementById('render').innerHTML =  ` <div class="panel">
-                                                        <h3>Register</h3>
-                                                        <input type="text" id="email" placeholder="Correo">
-                                                        <input type="password" id="pass" placeholder="Contraseña">
-                                                        <input type="submit" id="register" value="Enviar" data-action="submitRegistrer">
-                                                    </div>`;
+    render.innerHTML = `<div class="panel">
+                            <h3>Register</h3>
+                            <input type="text" id="email" placeholder="Correo">
+                            <input type="password" id="pass" placeholder="Contraseña">
+                            <input type="submit" id="register" value="Enviar" data-action="submitRegistrer">
+                        </div>`;
 }
 
 //PANTALLAD DE INICIO DE SESION
 function login() {
-    document.getElementById('render').innerHTML = ` <div class="panel">
-                                                        <h3>Login</h3>
-                                                        <input type="text" id="emailLogin" placeholder="Correo">
-                                                        <input type="password" id="passLogin" placeholder="Contraseña">
-                                                        <input type="submit" id="login" value="Enviar" data-action="submitLogin">
-                                                    </div>`;
+    render.innerHTML = `<div class="panel">
+                            <h3>Login</h3>
+                            <input type="text" id="emailLogin" placeholder="Correo">
+                            <input type="password" id="passLogin" placeholder="Contraseña">
+                            <input type="submit" id="login" value="Enviar" data-action="submitLogin">
+                        </div>`;
 }
 
 //PANTALLA REGISTRO ÉXITO
 function registered() {
-    document.getElementById('render').innerText= "Registrado con éxito. Inicia sesión para entrar en tu cuenta.";
+    render.innerText= "Registrado con éxito. Inicia sesión para entrar en tu cuenta.";
 }
 
 //PANTALLA DE USUARIO - INICIADA SESION
 function userSession(id) {
-    document.getElementById('toUser').innerHTML = `<li> <a href="" data-action="logOut"> Salir </a> </li>`;
-    document.getElementById('info').innerHTML = '';
-    document.getElementById('render').innerHTML = ` <div id="subMenu">
-                                                        <div> <h3> ¡Bienvenido ${firebase.auth().currentUser.email}! </h3> </div>
-                                                        <div class="subMenuButtons"> <a href="/user/${id.params.id}/favorites"> Favoritos </a> </div>
-                                                        <div class="subMenuButtons"> <a href="/user/${id.params.id}/wanted"> Quiero jugarlos </a> </div>
-                                                        <div class="subMenuButtons"> <a href="/user/${id.params.id}/playing"> Jugando </a> </div>
-                                                        <div class="subMenuButtons"> <a href="/user/${id.params.id}/completed"> Completados </a> </div>
-                                                    </div>`;
+    userPanel.innerHTML = `<li> <a href="" data-action="logOut"> Salir </a> </li>`;
+    info.innerHTML = '';
+    render.innerHTML = `<div id="subMenu">
+                            <div> <h3> ¡Bienvenido ${firebase.auth().currentUser.email}! </h3> </div>
+                            <div class="subMenuButtons"> <a href="/user/${id.params.id}/favorites"> Favoritos </a> </div>
+                            <div class="subMenuButtons"> <a href="/user/${id.params.id}/wanted"> Quiero jugarlos </a> </div>
+                            <div class="subMenuButtons"> <a href="/user/${id.params.id}/playing"> Jugando </a> </div>
+                            <div class="subMenuButtons"> <a href="/user/${id.params.id}/completed"> Completados </a> </div>
+                        </div>`;
 }
 
 //DESLOGUEAR
-document.getElementById('toUser').addEventListener('click', e => {
+userPanel.addEventListener('click', e => {
     const target = e.target.getAttribute("data-action");
     if(target === "logOut") {
         firebase
             .auth()
             .signOut()
             .then(() => {
-                document.getElementById('info').innerHTML= '';
-                document.getElementById('render').innerHTML= '';
+                info.innerHTML= '';
+                render.innerHTML= '';
                 //El observador actua y regresa a '/'
             })
             .catch(err => alert("ERROR", err)); 
@@ -106,7 +102,7 @@ document.getElementById('toUser').addEventListener('click', e => {
 })
 
 //AUTH
-document.getElementById('render').addEventListener('click', e => {
+render.addEventListener('click', e => {
     const target = e.target.getAttribute("data-action");
     if(target === "submitRegistrer") {
         let email = document.getElementById('email').value;
@@ -151,7 +147,7 @@ document.getElementById('render').addEventListener('click', e => {
 //BUSQUEDA DE JUEGOS
 document.getElementById('gameSearch').addEventListener('keydown', e => {
     if (e.keyCode === 13) {
-        var game = document.getElementById('gameSearch').value;
+        let game = document.getElementById('gameSearch').value;
         if(firebase.auth().currentUser){
             page.redirect('/user/'+firebase.auth().currentUser.uid+'/search/'+game);
         } else {
@@ -162,14 +158,14 @@ document.getElementById('gameSearch').addEventListener('keydown', e => {
 
 //PANTALLA DE JUEGOS - DIFERENTES RUTAS SESION
 function games(game){
-    document.getElementById('render').innerHTML = '';
+    render.innerHTML = '';
     //Búsqueda de videojuegos
     fetch('https://api.rawg.io/api/games?search='+game.params.id)
         .then(res => res.json())
         .then(data => {
             // console.log(data);
             data.results.forEach(game => {
-                document.getElementById('render').innerHTML += printGame(game);
+                render.innerHTML += printGame(game);
             });
         })
 }
@@ -213,7 +209,7 @@ const saveGames = game => {
 }
 
 //AGREGAR JUEGOS A LISTAS DE USUARIOS
-document.getElementById('render').addEventListener('click', e => {
+render.addEventListener('click', e => {
     const target = e.target.getAttribute("data-action");
     const key = e.target.parentElement.getAttribute("data-key");
 
@@ -234,22 +230,22 @@ document.getElementById('render').addEventListener('click', e => {
 
 //RUTAS JUEGOS DE CADA USUARIO
 function favorites() {
-    document.getElementById('info').innerHTML = `<h2> FAVORITOS </h2>`;
+    info.innerHTML = `<h2> FAVORITOS </h2>`;
     seeUserGames('favorite');
 }
 
 function wanted() {
-    document.getElementById('info').innerHTML = `<h2> QUIERO JUGAR </h2>`;
+    info.innerHTML = `<h2> QUIERO JUGAR </h2>`;
     seeUserGames('wanted');
 }
 
 function playing() {
-    document.getElementById('info').innerHTML = `<h2> JUGANDO </h2>`;
+    info.innerHTML = `<h2> JUGANDO </h2>`;
     seeUserGames('playing');
 }
 
 function completed() {
-    document.getElementById('info').innerHTML = `<h2> COMPLETADOS </h2>`;
+    info.innerHTML = `<h2> COMPLETADOS </h2>`;
     seeUserGames('completed');
 }
 
@@ -278,11 +274,11 @@ function deleteGame(folder, key) {
 
 //PINTAR JUEGOS GUARDADOS DE USUARIO
 function seeUserGames(folder) {
-    document.getElementById('render').innerHTML = '';
+    render.innerHTML = '';
     firebase.database().ref(firebase.auth().currentUser.uid).child(folder).on('value', snapshot => {
         snapshot.forEach((childSnapshot) => {
-            game = childSnapshot.val();
-            document.getElementById('render').innerHTML += `<div class="games" data-key="${childSnapshot.key}">
+            let game = childSnapshot.val();
+            render.innerHTML += `<div class="games" data-key="${childSnapshot.key}">
                                                                 <img src="${game.background_image}">
                                                                 <h3>${game.name}</h3>
                                                                 <ul class="genres">
