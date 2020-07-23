@@ -1,4 +1,4 @@
-Web para buscar y guardar videojuegos con sesión de usuarios.
+Web para buscar y guardar videojuegos utilizando RAWG api con sesión de usuarios .
 <p>Vanilla JS, firebase y page.js.</p>
 <hr/>
 <p>Buscar juegos sin registrarse:</p>
